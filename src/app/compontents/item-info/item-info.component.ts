@@ -42,24 +42,24 @@ export class ItemInfoComponent implements OnInit, OnChanges {
   }
 
   update(): void {
-    this.tableDefinitionService.getDefinition(this.tableName).then((definition: TableDefinition) => {
-      console.info(definition);
+    // this.tableDefinitionService.getDefinition(this.tableName).then((definition: TableDefinition) => {
+    //   console.info(definition);
 
-      this.title = this.tableDefinitionService.stringify(this.tableName, this.item);
+    //   this.title = this.tableDefinitionService.stringify(this.tableName, this.item);
 
-      this.infos = [];
-      definition.columns.forEach(col => {
-        const name = col.displayName;
-        const value = this.getValue(col);
-        this.infos.push([name, value]);
-      });
+    //   this.infos = [];
+    //   definition.columns.forEach(col => {
+    //     const name = col.displayName;
+    //     const value = this.getValue(col);
+    //     this.infos.push([name, value]);
+    //   });
 
-      this.additionalInfos = [];
-      definition.infoQueries.forEach(query => {
-        this.additionalInfos.push(this.getAdditional(query))
-      });
+    //   this.additionalInfos = [];
+    //   definition.infoQueries.forEach(query => {
+    //     this.additionalInfos.push(this.getAdditional(query))
+    //   });
 
-    });
+    // });
   }
 
 

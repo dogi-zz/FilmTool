@@ -1,0 +1,38 @@
+<h1>Mit der Struktur rumspielen ... Achtung, nix wird gespeichert</h1>
+
+<h2>Bearbeite Tabellen...</h2>
+<table style="border: 1px solid black; margin: 20px;">
+    <tr *ngFor="let table of tables">
+        <th style="border: 1px solid black; padding: 5px; text-align: left;">{{table}}</th>
+        <td style="border: 1px solid black; padding: 5px; "> <span style="cursor: pointer;"
+                  (click)="editStructure(table)">[struktur]</span></td>
+        <td style="border: 1px solid black; padding: 5px; "> <span style="cursor: pointer;"
+                  (click)="editFakeData(table)">[daten]</span></td>
+    </tr>
+</table>
+
+
+<div *ngIf="structureModel || fakeModel">
+    <div style="border: 1px solid 888888; box-shadow: 2px 2px 4px #888888;">
+        <ngs-code-editor *ngIf="structureModel"
+                         theme="vs"
+                         [codeModel]="structureModel"
+                         [options]="options">
+        </ngs-code-editor>
+        <ngs-code-editor *ngIf="fakeModel"
+                         theme="vs"
+                         [codeModel]="fakeModel"
+                         [options]="options">
+        </ngs-code-editor>
+    </div>
+    <div style="margin: 5px; text-align: right;">
+        <p-button *ngIf="structureModel"
+                  [label]="'Übernehme Struktur ' + tableName"
+                  icon="pi pi-save"
+                  (click)="saveStructrue()"></p-button>
+        <p-button *ngIf="fakeModel"
+                  [label]="'Übernehme Fake Daten ' + tableName"
+                  icon="pi pi-save"
+                  (click)="saveFakeData()"></p-button>
+    </div>
+</div>

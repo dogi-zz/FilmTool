@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.tableDefinitionService.tableDefinitions.subscribe(allDefs => {
+    this.tableDefinitionService.tableDefinitions$.subscribe(allDefs => {
       this.homeTables = Object.entries(allDefs).filter(([name, def]) => def.showOnHome).map(([name, def]) => name);
     });
   }

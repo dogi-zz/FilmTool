@@ -5,13 +5,15 @@ import {SortEvent} from 'primeng/api';
 import {Table, TableCheckbox} from 'primeng/table';
 import {DataService} from './../../services/data.service';
 import {TableDefinitionService, TableDefinitionItem, TableDefinition} from './../../services/table-definition.service';
+import {combineLatest} from 'rxjs';
+import {BaseComponent} from 'src/app/tools/base-component';
 
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss']
 })
-export class TableComponent implements OnInit {
+export class TableComponent extends BaseComponent implements OnInit {
 
   @ViewChild('dt') table: Table;
 
@@ -33,23 +35,38 @@ export class TableComponent implements OnInit {
     private dataService: DataService,
 
   ) {
-    this.route.params.subscribe(params => {
-      console.info(params)
-      // this.tableDefinitionService.getDefinition(params.tableName).then((definition: TableDefinition) => {
-      //   this.tableName = params.tableName;
-      //   this.displayName = definition.name;
-      //   this.definitions = definition.columns;
-      //   this.updateData();
-      // });
-    });
+    super();
   }
 
   ngOnInit(): void {
+    super.ngOnInit();
+    this.tableDefinitionService.tableDefinitions$.subscribe(data => {
+      console.info("DATA hier", data);
+    })
+    this.subscribe(
+      combineLatest([
+        this.route.params,
+        this.tableDefinitionService.tableDefinitions$
+      ]),
+      ([params, definitions]) => {
+        console.info(params);
+        console.info(definitions);
+        if (!params) {return;}
+        if (!definitions) {return;}
+        const tableName = params.tableName;
+        const definition = definitions[tableName];
+        this.tableName = params.tableName;
+        this.displayName = definition.name;
+        this.definitions = definition.columns;
+        this.updateData();
+      }
+    );
   }
 
   updateData(): void {
     this.dataService.fetchData(this.tableName).then(data => {
       this.entries = data;
+      console.info("Update", data);
 
       this.subEntitiesById = {};
       this.definitions.forEach(def => {
@@ -69,7 +86,6 @@ export class TableComponent implements OnInit {
         this.itemNamesId[entry.id] = this.tableDefinitionService.stringify(this.tableName, entry);
       });
 
-      console.info("UD", data);
       // this.data = {};
       // this.data[]
       // this.dataById = {};
