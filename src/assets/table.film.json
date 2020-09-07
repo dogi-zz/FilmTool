@@ -1,0 +1,23 @@
+{
+  "name": "Filme",
+  "showOnHome": true,
+  "columns": [
+    { "type": "number", "name": "id", "displayName": "ID" },
+    { "type": "string", "name": "title", "displayName": "Titel" },
+    { "type": "string", "name": "subtitle", "displayName": "Untertitel" },
+    { "type": "number", "name": "jahr", "displayName": "Erscheinungsjahr" },
+    { "type": "select", "name": "genre", "displayName": "Genre", "options": ["Doku", "Abenteuer", "Liebesfilm"]},
+    { "type": "relation", "name": "regie", "displayName": "Regie", "table": "person" }
+  ],
+  "infoQueries": [
+    {
+      "name": "Alle Filme vom selben Regisseur",
+      "query": {
+        "select": [["f.name", "Film"], ["f.jahr", "Jahr"]],
+        "from": "film f",
+        "where": ["f.regie = {regie}"],
+        "oder": ["f.jahr ASC"]
+      }
+    }
+  ]
+}

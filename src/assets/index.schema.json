@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "required": ["name", "columns"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "toStringExpression": {
+      "type": "string"
+    },
+    "showOnHome": {
+      "type": "boolean"
+    },
+    "columns": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "oneOf": [
+            {
+              "required": ["type", "name", "displayName"],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["string", "number"]
+                },
+                "name": {
+                  "type": "string"
+                },
+                "displayName": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "required": ["type", "name", "displayName", "options"],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "const": "select"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "infoQueries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "query"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "query": {
+            "type": "object",
+            "required": ["select", "from", "where"],
+            "properties": {
+              "select": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "from": {
+                "type": "string"
+              },
+              "where": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+
+            }
+          }
+        }
+      }
+    }
+  }
+}

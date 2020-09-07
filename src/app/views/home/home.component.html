@@ -1,0 +1,45 @@
+<h1>Anzeige</h1>
+
+<ul>
+    <li *ngFor="let table of homeTables">
+        <a [routerLink]="['/table', table]"
+           routerLinkActive="router-link-active">{{table}}</a>
+    </li>
+</ul>
+
+
+<h2>Bearbeite Tabellen...</h2>
+<ul>
+    <li *ngFor="let table of tables">
+        <span style="cursor: pointer;"
+              (click)="editTable(table)">[struktur]</span>
+        <span style="cursor: pointer;"
+              (click)="editFakeData(table)">[fake Daten]</span>
+        {{table}}
+    </li>
+</ul>
+
+<div *ngIf="codeModel || fakeModel">
+    <div style="border: 1px solid 888888; box-shadow: 2px 2px 4px #888888;">
+        <ngs-code-editor *ngIf="codeModel"
+                         theme="vs"
+                         [codeModel]="codeModel"
+                         [options]="options">
+        </ngs-code-editor>
+        <ngs-code-editor *ngIf="fakeModel"
+                         theme="vs"
+                         [codeModel]="fakeModel"
+                         [options]="options">
+        </ngs-code-editor>
+    </div>
+    <div style="margin: 5px; text-align: right;">
+        <p-button *ngIf="codeModel"
+                  [label]="'Speichere Struktur ' + tableName"
+                  icon="pi pi-save"
+                  (click)="save()"></p-button>
+        <p-button *ngIf="fakeModel"
+                  [label]="'Speichere Fake Daten ' + tableName"
+                  icon="pi pi-save"
+                  (click)="saveFakeData()"></p-button>
+    </div>
+</div>

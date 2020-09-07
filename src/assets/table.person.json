@@ -1,0 +1,30 @@
+{
+  "name": "Person",
+  "showOnHome": true,
+  "columns": [
+    { "type": "number", "name": "id", "displayName": "ID" },
+    { "type": "string", "name": "name1", "displayName": "Vorname" },
+    { "type": "string", "name": "name2", "displayName": "Nachname" },
+    { "type": "relation", "name": "role", "displayName": "Rolle", "table": "person_role" },
+    { "type": "select", "name": "sex", "displayName": "Geschlecht", "options": ["Mann", "Frau"]}
+  ],
+  "infoQueries": [
+    {
+      "name": "Alle Filme mit der Person",
+      "query": {
+        "select": [["f.name", "Film"], ["r.rolle", "Rolle"]],
+        "from": "person p JOIN rolle r on p.rolle = r.id JOIN film.f on r.film = f.id",
+        "where": ["p.id = {id}"]
+      }
+    },
+    {
+      "name": "Alle Freunde Person",
+      "query": {
+        "select": [["p.name", "Freund"]],
+        "from": "person p1 JOIN person p2 on p2.id = p1.freund",
+        "where": ["p1.id = {id}"]
+      }
+    }
+
+  ]
+}

@@ -1,0 +1,23 @@
+<h1>{{title|async}}</h1>
+
+<table>
+    <tr *ngFor="let item of infos">
+        <th>{{item[0]}}</th>
+        <td>{{item[1]|async}}</td>
+    </tr>
+</table>
+
+<div *ngFor="let ai of additionalInfos">
+    <h2>{{(ai | async)?.name}}</h2>
+    <table>
+        <tr>
+            <th *ngFor="let item of (ai | async)?.cols">{{item}}</th>
+        </tr>
+        <tr>
+            <td *ngFor="let item of (ai | async)?.cols">irgenwas</td>
+        </tr>
+        <tr>
+            <td *ngFor="let item of (ai | async)?.cols">irgenwas</td>
+        </tr>
+    </table>
+</div>

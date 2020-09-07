@@ -1,0 +1,7 @@
+{
+    "tables": [
+        "film",
+        "person",
+        "person_role"
+    ]
+}

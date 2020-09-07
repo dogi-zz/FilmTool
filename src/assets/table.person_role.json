@@ -1,0 +1,8 @@
+{
+  "name": "Rolle",
+  "toStringExpression": "Die Rolle '{role}'",
+  "columns": [
+    { "name": "id", "displayName": "ID", "type": "number" },
+    { "name": "role", "displayName": "Rolle", "type": "string" }
+  ]
+}
