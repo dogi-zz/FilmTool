@@ -34,12 +34,13 @@ export class TableComponent implements OnInit {
 
   ) {
     this.route.params.subscribe(params => {
-      this.tableDefinitionService.getDefinition(params.tableName).then((definition: TableDefinition) => {
-        this.tableName = params.tableName;
-        this.displayName = definition.name;
-        this.definitions = definition.columns;
-        this.updateData();
-      });
+      console.info(params)
+      // this.tableDefinitionService.getDefinition(params.tableName).then((definition: TableDefinition) => {
+      //   this.tableName = params.tableName;
+      //   this.displayName = definition.name;
+      //   this.definitions = definition.columns;
+      //   this.updateData();
+      // });
     });
   }
 
