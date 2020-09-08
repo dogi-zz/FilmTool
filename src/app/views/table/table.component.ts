@@ -12,9 +12,9 @@ interface ColumnItem {
   name: string;
   sortOrder?: NzTableSortOrder;
   sortFn?: NzTableSortFn;
-  // listOfFilter?: NzTableFilterList;
-  // filterFn?: NzTableFilterFn;
-  // filterMultiple?: boolean;
+  listOfFilter?: NzTableFilterList;
+  filterFn?: NzTableFilterFn;
+
 }
 
 @Component({
@@ -94,7 +94,7 @@ export class TableComponent extends BaseComponent implements OnInit {
 
   updateDefinitions(): void {
     this.extDefinitions = this.definitions.map(def => {
-      return {
+      const columnItem: ColumnItem = {
         name: def.displayName,
         sortOrder: null,
         sortFn: (a: any, b: any) => {
@@ -109,6 +109,11 @@ export class TableComponent extends BaseComponent implements OnInit {
           return (a[def.name] || '').localeCompare(b[def.name] || '');
         },
       };
+      if (def.type === 'select') {
+        columnItem.listOfFilter = def.options.map(option => ({text: option, value: option}));
+        columnItem.filterFn = (list: string[], item: any) => list.includes(item[def.name]);
+      }
+      return columnItem;
     });
   }
 
@@ -138,6 +143,16 @@ export class TableComponent extends BaseComponent implements OnInit {
       });
     });
   }
+
+  resetFilters(): void {
+    this.definitions.forEach((def, idx) => {
+      if (def.type === 'select') {
+        this.extDefinitions[idx].listOfFilter = def.options.map(option => ({text: option, value: option}));
+      }
+    });
+  }
+
+
 
 
 

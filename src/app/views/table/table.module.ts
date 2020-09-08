@@ -5,12 +5,8 @@ import {CommonModule} from '@angular/common';
 import {TableComponent} from './table.component';
 
 import {NzTableModule} from 'ng-zorro-antd/table';
-
-import {TableModule} from 'primeng/table';
-import {ButtonModule} from 'primeng/button';
-import {PanelModule} from 'primeng/panel';
-import {InputTextModule} from 'primeng/inputtext';
-import {CardModule} from 'primeng/card';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 
 @NgModule({
@@ -19,13 +15,9 @@ import {CardModule} from 'primeng/card';
 
     AddFormModule,
 
-    TableModule,
-    ButtonModule,
-    PanelModule,
-    InputTextModule,
-    CardModule,
-
     NzTableModule,
+    NzButtonModule,
+    NzIconModule,
 
     ItemInfoModule,
   ],

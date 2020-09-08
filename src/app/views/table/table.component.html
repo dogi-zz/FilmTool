@@ -5,13 +5,31 @@
     <div style="margin: 20px; flex: 1">
 
         <ng-container *ngIf="!detailItem">
+            <div style="margin: 5px; display: flex;">
+                <div style="flex: 1; text-align: left;">
+                    <button nz-button
+                            (click)="resetFilters()">Clear filters</button>
+                </div>
+                <div style="flex: 1; text-align: right;">
+                    <button nz-button
+                            nzType="primary"
+                            (click)="addNewItem()">
+                        <i nz-icon
+                           nzType="form"></i> add
+                    </button>
+                </div>
+            </div>
+
             <nz-table #dataTable
                       [nzData]="entries">
                 <thead>
                     <tr>
                         <th *ngFor="let column of extDefinitions"
                             [nzSortOrder]="column.sortOrder"
-                            [nzSortFn]="column.sortFn">
+                            [nzSortFn]="column.sortFn"
+                            [nzFilterMultiple]="true"
+                            [nzFilters]="column.listOfFilter"
+                            [nzFilterFn]="column.filterFn">
                             {{ column.name }}
                         </th>
                     </tr>
@@ -36,13 +54,7 @@
                     </tr>
                 </tbody>
             </nz-table>
-            <div style="margin: 20px; text-align: right;">
-                <button type="button"
-                        (click)="addNewItem()"
-                        pButton
-                        icon="pi pi-plus"
-                        label="add"></button>
-            </div>
+
         </ng-container>
 
         <ng-container *ngIf="detailItem">
@@ -73,10 +85,10 @@
          *ngIf="detailItem">
 
         <div style="margin: 20px; text-align: right;">
-            <button type="button"
-                    (click)="detailItem = null"
-                    pButton
-                    icon="pi pi-times"></button>
+            <button nz-button
+                    nzType="primary"
+                    (click)="detailItem = null"><i nz-icon
+                   nzType="close"></i></button>
         </div>
 
         <app-item-info [item]="detailItem"
