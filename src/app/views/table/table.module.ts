@@ -5,8 +5,8 @@ import {CommonModule} from '@angular/common';
 import {TableComponent} from './table.component';
 
 import {NzTableModule} from 'ng-zorro-antd/table';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzIconModule } from 'ng-zorro-antd/icon';
+import {NzButtonModule} from 'ng-zorro-antd/button';
+import {NzIconModule} from 'ng-zorro-antd/icon';
 
 
 @NgModule({

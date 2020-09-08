@@ -26,13 +26,17 @@
         </ngs-code-editor>
     </div>
     <div style="margin: 5px; text-align: right;">
-        <p-button *ngIf="structureModel"
-                  [label]="'Übernehme Struktur ' + tableName"
-                  icon="pi pi-save"
-                  (click)="saveStructrue()"></p-button>
-        <p-button *ngIf="fakeModel"
-                  [label]="'Übernehme Fake Daten ' + tableName"
-                  icon="pi pi-save"
-                  (click)="saveFakeData()"></p-button>
+        <button *ngIf="structureModel"
+                nz-button
+                nzType="primary"
+                (click)="saveStructrue()">
+            Übernehme Struktur: {{tableName}}
+        </button>
+        <button *ngIf="fakeModel"
+                nz-button
+                nzType="primary"
+                (click)="saveFakeData()">
+            Übernehme Fake Daten: {{tableName}}
+        </button>
     </div>
 </div>
