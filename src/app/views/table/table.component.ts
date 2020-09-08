@@ -117,6 +117,7 @@ export class TableComponent extends BaseComponent implements OnInit {
       this.entries = data;
       console.info("updateData", data);
 
+      // Update Subentity Cache
       this.subEntitiesById = {};
       this.definitions.forEach(def => {
         if (def.type === 'relation') {
@@ -130,24 +131,11 @@ export class TableComponent extends BaseComponent implements OnInit {
         }
       });
 
+      // Update Item Cache
       this.itemNamesId = {};
       this.entries.forEach(entry => {
         this.itemNamesId[entry.id] = this.tableDefinitionService.stringify(this.tableName, entry);
       });
-
-      // Update Cache
-
-      // this.data = {};
-      // this.data[]
-      // this.dataById = {};
-      // Object.entries(data).forEach(([table, entries]) => {
-      //   this.dataById[table] = {};
-      //   (entries as any[]).forEach(entry => {
-      //     this.dataById[table][entry.id] = entry;
-      //   })
-      // })
-      // console.info(data);
-      // console.info(this.dataById);
     });
   }
 
