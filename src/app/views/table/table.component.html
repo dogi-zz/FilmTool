@@ -4,87 +4,72 @@
 
     <div style="margin: 20px; flex: 1">
 
-        <ng-container *ngIf="!detailItem">
-            <div style="margin: 5px; display: flex;">
-                <div style="flex: 1; text-align: left;">
-                    <button nz-button
-                            (click)="resetFilters()">Clear filters</button>
-                </div>
-                <div style="flex: 1; text-align: right;">
-                    <button nz-button
-                            nzType="primary"
-                            (click)="addNewItem()">
-                        <i nz-icon
-                           nzType="form"></i> add
-                    </button>
-                </div>
+        <div style="margin: 5px; display: flex;"
+             *ngIf="!detailItem">
+            <div style="flex: 1; text-align: left;">
+                <button nz-button
+                        (click)="resetFilters()">Clear filters</button>
             </div>
+            <div style="flex: 1; text-align: right;">
+                <button nz-button
+                        nzType="primary"
+                        (click)="addNewItem()">
+                    <i nz-icon
+                       nzType="form"></i> add
+                </button>
+            </div>
+        </div>
 
-            <nz-table #dataTable
-                      (nzQueryParams)="onQueryParamsChange($event)"
-                      [nzPageSize]="pageSize"
-                      [nzPageIndex]="pageIndex"
-                      [nzData]="entries">
-                <thead>
-                    <tr>
-                        <th *ngFor="let column of extDefinitions"
-                            [nzSortOrder]="column.sortOrder"
-                            [nzSortFn]="column.sortFn"
-                            [nzFilterMultiple]="true"
-                            [nzFilters]="column.listOfFilter"
-                            [nzFilterFn]="column.filterFn">
-                            {{ column.name }}
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let data of dataTable.data"
-                        (click)="showDetails(data)">
-                        <td *ngFor="let definition of definitions">
+        <nz-table #dataTable
+                  [nzData]="entries">
+            <thead>
+                <tr>
+                    <th [class.hidden]="!detailItem">
+                        ID
+                    </th>
+                    <th [class.hidden]="!detailItem">
+                        Item
+                    </th>
+                    <th *ngFor="let column of extDefinitions"
+                        [class.hidden]="detailItem"
+                        [nzSortOrder]="column.sortOrder"
+                        [nzSortFn]="column.sortFn"
+                        [nzFilterMultiple]="true"
+                        [nzFilters]="column.listOfFilter"
+                        [nzFilterFn]="column.filterFn">
+                        {{ column.name }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of dataTable.data"
+                    (click)="showDetails(data)">
+                    <td [class.hidden]="!detailItem"
+                        [class.marked]="data == detailItem">
+                        {{data.id}}
+                    </td>
+                    <td [class.hidden]="!detailItem"
+                        [class.marked]="data == detailItem">
+                        {{itemNamesId[data.id]}}
+                    </td>
+                    <td *ngFor="let definition of definitions"
+                        [class.hidden]="detailItem">
 
-                            <ng-container
-                                          *ngIf="definition.type == 'string' || definition.type == 'number' || definition.type == 'select'">
-                                {{data[definition.name]}}
+                        <ng-container
+                                      *ngIf="definition.type == 'string' || definition.type == 'number' || definition.type == 'select'">
+                            {{data[definition.name]}}
+                        </ng-container>
+
+                        <ng-container *ngIf="definition.type == 'relation'">
+                            <ng-container *ngIf="subEntitiesById[definition.name] && data[definition.name]">
+                                {{subEntitiesById[definition.name][data[definition.name]] }}
                             </ng-container>
+                        </ng-container>
 
-                            <ng-container *ngIf="definition.type == 'relation'">
-                                <ng-container *ngIf="subEntitiesById[definition.name] && data[definition.name]">
-                                    {{subEntitiesById[definition.name][data[definition.name]] }}
-                                </ng-container>
-                            </ng-container>
-
-                        </td>
-                    </tr>
-                </tbody>
-            </nz-table>
-
-        </ng-container>
-
-        <ng-container *ngIf="detailItem">
-            <nz-table #listTable
-                      (nzQueryParams)="onListParamsChange($event)"
-                      [nzPageSize]="pageSize"
-                      [nzPageIndex]="pageIndex"
-                      [nzData]="listEntries">
-                <thead>
-                    <tr>
-                        <th>
-                            Item
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let data of listTable.data"
-                        (click)="showDetails(data)">
-                        <td [class.marked]="data == detailItem">
-                            {{itemNamesId[data.id]}}
-                        </td>
-                    </tr>
-                </tbody>
-            </nz-table>
-        </ng-container>
-
-
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
     </div>
 
     <div style="margin: 20px; flex: 1"
