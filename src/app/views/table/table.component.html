@@ -4,26 +4,21 @@
 
     <div style="margin: 20px; flex: 1">
 
-        <nz-table #dataTable
-                  [nzData]="entries">
-            <thead>
-                <tr>
-                    <ng-container *ngIf="!detailItem">
+        <ng-container *ngIf="!detailItem">
+            <nz-table #dataTable
+                      [nzData]="entries">
+                <thead>
+                    <tr>
                         <th *ngFor="let column of extDefinitions"
                             [nzSortOrder]="column.sortOrder"
                             [nzSortFn]="column.sortFn">
                             {{ column.name }}
                         </th>
-                    </ng-container>
-                    <th *ngIf="detailItem">
-                        Item
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let data of dataTable.data"
-                    (click)="showDetails(data)">
-                    <ng-container *ngIf="!detailItem">
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of dataTable.data"
+                        (click)="showDetails(data)">
                         <td *ngFor="let definition of definitions">
 
                             <ng-container
@@ -38,23 +33,39 @@
                             </ng-container>
 
                         </td>
-                    </ng-container>
-                    <td *ngIf="detailItem"
-                        [class.marked]="data == detailItem">
-                        {{itemNamesId[data.id]}}
-                    </td>
-                </tr>
-            </tbody>
-        </nz-table>
+                    </tr>
+                </tbody>
+            </nz-table>
+            <div style="margin: 20px; text-align: right;">
+                <button type="button"
+                        (click)="addNewItem()"
+                        pButton
+                        icon="pi pi-plus"
+                        label="add"></button>
+            </div>
+        </ng-container>
 
-        <div style="margin: 20px; text-align: right;"
-             *ngIf="!detailItem">
-            <button type="button"
-                    (click)="addNewItem()"
-                    pButton
-                    icon="pi pi-plus"
-                    label="add"></button>
-        </div>
+        <ng-container *ngIf="detailItem">
+            <nz-table #dataTable
+                      [nzData]="entries">
+                <thead>
+                    <tr>
+                        <th>
+                            Item
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of dataTable.data"
+                        (click)="showDetails(data)">
+                        <td [class.marked]="data == detailItem">
+                            {{itemNamesId[data.id]}}
+                        </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </ng-container>
+
 
     </div>
 
