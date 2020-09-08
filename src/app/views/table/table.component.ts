@@ -6,7 +6,7 @@ import {DataService} from './../../services/data.service';
 import {TableDefinitionService, TableDefinitionItem, TableDefinition} from './../../services/table-definition.service';
 import {combineLatest} from 'rxjs';
 import {BaseComponent} from 'src/app/tools/base-component';
-import {NzTableSortOrder, NzTableSortFn, NzTableFilterList, NzTableFilterFn} from 'ng-zorro-antd/table';
+import {NzTableSortOrder, NzTableSortFn, NzTableFilterList, NzTableFilterFn, NzTableQueryParams, NzTableComponent} from 'ng-zorro-antd/table';
 
 interface ColumnItem {
   name: string;
@@ -27,28 +27,12 @@ export class TableComponent extends BaseComponent implements OnInit {
   displayName: string;
   tableName: string;
   entries: any[];
+  listEntries: any[];
 
   definitions: TableDefinitionItem[] = [];
-  extDefinitions: ColumnItem[] = [
-    // {
-    //   name: 'Age',
-    //   sortOrder: 'descend',
-    //   sortFn: (a: DataItem, b: DataItem) => a.age - b.age,
-    //   sortDirections: ['descend', null]
-    // },
-    // {
-    //   name: 'Address',
-    //   sortOrder: null,
-    //   sortFn: (a: DataItem, b: DataItem) => a.address.length - b.address.length,
-    //   filterMultiple: false,
-    //   listOfFilter: [
-    //     { text: 'London', value: 'London' },
-    //     { text: 'Sidney', value: 'Sidney' }
-    //   ],
-    //   filterFn: (address: string, item: DataItem) => item.address.indexOf(address) !== -1
-    // }
-  ];
-
+  extDefinitions: ColumnItem[] = [];
+  pageSize = 10;
+  pageIndex = 1;
 
   subEntitiesById: {[propName: string]: {[id: number]: string}} = {};
   detailItem: any;
@@ -120,6 +104,7 @@ export class TableComponent extends BaseComponent implements OnInit {
   updateData(): void {
     this.dataService.fetchData(this.tableName).then(data => {
       this.entries = data;
+      this.listEntries = data.slice();
       console.info("updateData", data);
 
       // Update Subentity Cache
@@ -152,6 +137,35 @@ export class TableComponent extends BaseComponent implements OnInit {
     });
   }
 
+  onQueryParamsChange(params: NzTableQueryParams): void {
+    this.pageIndex = params.pageIndex;
+    if (!this.entries) {return;}
+
+    // Apply in List Array
+    const filterCols = this.extDefinitions.filter(col => col.filterFn);
+    this.listEntries = this.entries.filter(entry => {
+      for (let i = 0; i < filterCols.length; i++) {
+        if (params.filter[i] && params.filter[i].value && params.filter[i].value.length) {
+          if (!filterCols[i].filterFn(params.filter[i].value, entry)) {
+            return false;
+          }
+        }
+      }
+      return true;
+    });
+    const sortIndex = params.sort.findIndex(p => p.value);
+    if (sortIndex >= 0) {
+      this.listEntries.sort((a, b) => {
+        const order = this.extDefinitions[sortIndex].sortFn(a, b);
+        return params.sort[sortIndex].value === 'ascend' ? order : (order * -1);
+      });
+    }
+  }
+
+  onListParamsChange(params: NzTableQueryParams): void {
+    console.log(params);
+    this.pageIndex = params.pageIndex;
+  }
 
 
 

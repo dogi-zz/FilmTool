@@ -1,3 +1,15 @@
-id ;name1 ;name2     ;sex
-123;Max   ;Mustermann;Mann
-124;Moritz;          ;Mann
+id ;name1 ;name2     ;sex  ;role
+123;Max   ;Mustermann;Mann ;1
+124;Moritz;          ;Mann ;2
+11;Testname1;Maier;Frau ;2
+12;Testname1;Maier;Frau ;2
+13;Testname1;Maier;Frau ;2
+14;Testname1;Maier;Frau ;2
+15;Testname1;Maier;Frau ;2
+16;Testname1;Maier;Frau ;2
+17;Testname1;Maier;Frau ;2
+18;Testname1;Maier;Frau ;2
+19;Testname1;Maier;Frau ;2
+20;Testname1;Maier;Frau ;2
+21;Testname1;Maier;Frau ;2
+22;Testname1;Maier;Frau ;2

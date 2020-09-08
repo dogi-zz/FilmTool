@@ -6,7 +6,8 @@
     { "type": "string", "name": "name1", "displayName": "Vorname" },
     { "type": "string", "name": "name2", "displayName": "Nachname" },
     { "type": "relation", "name": "role", "displayName": "Rolle", "table": "person_role" },
-    { "type": "select", "name": "sex", "displayName": "Geschlecht", "options": ["Mann", "Frau"]}
+    { "type": "select", "name": "sex", "displayName": "Geschlecht", "options": ["Mann", "Frau"]},
+    { "type": "select", "name": "nice", "displayName": "Nett oder Böse", "options": ["nett", "böse"]}
   ],
   "infoQueries": [
     {

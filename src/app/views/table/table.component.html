@@ -21,6 +21,9 @@
             </div>
 
             <nz-table #dataTable
+                      (nzQueryParams)="onQueryParamsChange($event)"
+                      [nzPageSize]="pageSize"
+                      [nzPageIndex]="pageIndex"
                       [nzData]="entries">
                 <thead>
                     <tr>
@@ -58,8 +61,11 @@
         </ng-container>
 
         <ng-container *ngIf="detailItem">
-            <nz-table #dataTable
-                      [nzData]="entries">
+            <nz-table #listTable
+                      (nzQueryParams)="onListParamsChange($event)"
+                      [nzPageSize]="pageSize"
+                      [nzPageIndex]="pageIndex"
+                      [nzData]="listEntries">
                 <thead>
                     <tr>
                         <th>
@@ -68,7 +74,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let data of dataTable.data"
+                    <tr *ngFor="let data of listTable.data"
                         (click)="showDetails(data)">
                         <td [class.marked]="data == detailItem">
                             {{itemNamesId[data.id]}}
