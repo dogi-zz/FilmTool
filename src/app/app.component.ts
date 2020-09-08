@@ -1,6 +1,8 @@
 import {TableDefinitionService} from './services/table-definition.service';
 import {Component, OnInit} from '@angular/core';
 
+// https://ng.ant.design/docs/introduce/en
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

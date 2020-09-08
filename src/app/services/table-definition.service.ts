@@ -125,8 +125,10 @@ export class TableDefinitionService {
     //     });
     // }
 
-    stringify(tableName: string, item: any): Promise<string> {
-        return this.getDefinition(tableName).then(def => {
+    stringify(tableName: string, item: any): string {
+        if (!item) {return null;}
+        if (this.$tableDefinitions[tableName]) {
+            const def = this.$tableDefinitions[tableName];
             if (def.toStringExpression) {
                 let result = def.toStringExpression;
                 def.toStringExpression.match(/\{.+?\}/g).forEach(tag => {
@@ -136,9 +138,8 @@ export class TableDefinitionService {
                 return result;
             }
             return `${def.name} with id ${item.id}`;
-        });
+        }
+        return `Object with id ${item.id}`;
     }
-
-
 
 }

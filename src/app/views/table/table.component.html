@@ -3,69 +3,49 @@
 <div style="display: flex;">
 
     <div style="margin: 20px; flex: 1">
-        <p-table #dt
-                 [value]="entries"
-                 [rowsPerPageOptions]="[10,25,50]"
-                 (sortFunction)="customSort($event)"
-                 [customSort]="true">
-            <ng-template pTemplate="header">
+
+        <nz-table #dataTable
+                  [nzData]="entries">
+            <thead>
                 <tr>
                     <ng-container *ngIf="!detailItem">
-                        <th *ngFor="let definition of definitions">
-                            {{definition.displayName}}
-                            <p-sortIcon [field]="definition.name"></p-sortIcon>
+                        <th *ngFor="let column of extDefinitions"
+                            [nzSortOrder]="column.sortOrder"
+                            [nzSortFn]="column.sortFn">
+                            {{ column.name }}
                         </th>
                     </ng-container>
-                    <th rowspan="2"
-                        *ngIf="detailItem">
+                    <th *ngIf="detailItem">
                         Item
                     </th>
-                    <th rowspan="2"
-                        style="width: 70px;">
-                    </th>
                 </tr>
-                <tr *ngIf="!detailItem">
-                    <th *ngFor="let definition of definitions">
-                        <input pInputText
-                               style="width: 100%;"
-                               type="text"
-                               (input)="dt.filter($event.target.value, 'name', 'startsWith')"
-                               class="p-column-filter">
-                    </th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body"
-                         let-item>
-                <tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of dataTable.data"
+                    (click)="showDetails(data)">
                     <ng-container *ngIf="!detailItem">
                         <td *ngFor="let definition of definitions">
 
                             <ng-container
                                           *ngIf="definition.type == 'string' || definition.type == 'number' || definition.type == 'select'">
-                                {{item[definition.name]}}
+                                {{data[definition.name]}}
                             </ng-container>
 
                             <ng-container *ngIf="definition.type == 'relation'">
-                                <ng-container *ngIf="subEntitiesById[definition.name] && item[definition.name]">
-                                    {{subEntitiesById[definition.name][item[definition.name]] | async}}
+                                <ng-container *ngIf="subEntitiesById[definition.name] && data[definition.name]">
+                                    {{subEntitiesById[definition.name][data[definition.name]] }}
                                 </ng-container>
                             </ng-container>
 
                         </td>
                     </ng-container>
-
                     <td *ngIf="detailItem"
-                        [class.marked]="item == detailItem">
-                        {{itemNamesId[item.id]|async}}
-                    </td>
-
-                    <td>
-                        <p-button icon="pi pi-search"
-                                  (click)="showDetails(item)"></p-button>
+                        [class.marked]="data == detailItem">
+                        {{itemNamesId[data.id]}}
                     </td>
                 </tr>
-            </ng-template>
-        </p-table>
+            </tbody>
+        </nz-table>
 
         <div style="margin: 20px; text-align: right;"
              *ngIf="!detailItem">

@@ -1,7 +1,10 @@
-import {OnInit, OnDestroy} from '@angular/core';
+import { OnInit, OnDestroy, Component } from '@angular/core';
 
 import {Observable, Subscription} from 'rxjs';
 
+@Component({
+    template: ''
+})
 export abstract class BaseComponent implements OnInit, OnDestroy {
 
     private subscriptions: Subscription[] = [];

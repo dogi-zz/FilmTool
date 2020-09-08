@@ -70,8 +70,8 @@ export class AddItemService {
 
     private async openAddForm(): Promise<void> {
         const tableName = this.addList[this.addList.length - 1];
-        const definitions = await this.tableDefinitionService.getDefinitionItems(tableName);
-        this.modalFormInstance.initEdit(tableName, definitions);
+        //const definitions = await this.tableDefinitionService.getDefinitionItems(tableName);
+        //this.modalFormInstance.initEdit(tableName, definitions);
     }
 
     public addSubItem(tableName: string, fieldName: string): Promise<any> {

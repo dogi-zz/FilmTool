@@ -2,11 +2,20 @@ import {AddItemService} from './../../services/add-item.service';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {SortEvent} from 'primeng/api';
-import {Table, TableCheckbox} from 'primeng/table';
 import {DataService} from './../../services/data.service';
 import {TableDefinitionService, TableDefinitionItem, TableDefinition} from './../../services/table-definition.service';
 import {combineLatest} from 'rxjs';
 import {BaseComponent} from 'src/app/tools/base-component';
+import {NzTableSortOrder, NzTableSortFn, NzTableFilterList, NzTableFilterFn} from 'ng-zorro-antd/table';
+
+interface ColumnItem {
+  name: string;
+  sortOrder?: NzTableSortOrder;
+  sortFn?: NzTableSortFn;
+  // listOfFilter?: NzTableFilterList;
+  // filterFn?: NzTableFilterFn;
+  // filterMultiple?: boolean;
+}
 
 @Component({
   selector: 'app-table',
@@ -15,18 +24,36 @@ import {BaseComponent} from 'src/app/tools/base-component';
 })
 export class TableComponent extends BaseComponent implements OnInit {
 
-  @ViewChild('dt') table: Table;
-
   displayName: string;
   tableName: string;
   entries: any[];
 
   definitions: TableDefinitionItem[] = [];
+  extDefinitions: ColumnItem[] = [
+    // {
+    //   name: 'Age',
+    //   sortOrder: 'descend',
+    //   sortFn: (a: DataItem, b: DataItem) => a.age - b.age,
+    //   sortDirections: ['descend', null]
+    // },
+    // {
+    //   name: 'Address',
+    //   sortOrder: null,
+    //   sortFn: (a: DataItem, b: DataItem) => a.address.length - b.address.length,
+    //   filterMultiple: false,
+    //   listOfFilter: [
+    //     { text: 'London', value: 'London' },
+    //     { text: 'Sidney', value: 'Sidney' }
+    //   ],
+    //   filterFn: (address: string, item: DataItem) => item.address.indexOf(address) !== -1
+    // }
+  ];
 
-  subEntitiesById: {[propName: string]: {[id: number]: Promise<string>}} = {};
+
+  subEntitiesById: {[propName: string]: {[id: number]: string}} = {};
   detailItem: any;
 
-  itemNamesId: {[id: number]: Promise<string>} = {};
+  itemNamesId: {[id: number]: string} = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -42,7 +69,7 @@ export class TableComponent extends BaseComponent implements OnInit {
     super.ngOnInit();
     this.tableDefinitionService.tableDefinitions$.subscribe(data => {
       console.info("DATA hier", data);
-    })
+    });
     this.subscribe(
       combineLatest([
         this.route.params,
@@ -58,15 +85,37 @@ export class TableComponent extends BaseComponent implements OnInit {
         this.tableName = params.tableName;
         this.displayName = definition.name;
         this.definitions = definition.columns;
+
+        this.updateDefinitions();
         this.updateData();
       }
     );
   }
 
+  updateDefinitions(): void {
+    this.extDefinitions = this.definitions.map(def => {
+      return {
+        name: def.displayName,
+        sortOrder: null,
+        sortFn: (a: any, b: any) => {
+          if (def.type === 'number') {
+            return a[def.name] - b[def.name];
+          }
+          if (def.type === 'relation') {
+            const aName = this.tableDefinitionService.stringify(def.table, this.subEntitiesById[def.name][a]);
+            const bName = this.tableDefinitionService.stringify(def.table, this.subEntitiesById[def.name][b]);
+            return (aName || '').localeCompare(bName || '');
+          }
+          return (a[def.name] || '').localeCompare(b[def.name] || '');
+        },
+      };
+    });
+  }
+
   updateData(): void {
     this.dataService.fetchData(this.tableName).then(data => {
       this.entries = data;
-      console.info("Update", data);
+      console.info("updateData", data);
 
       this.subEntitiesById = {};
       this.definitions.forEach(def => {
@@ -85,6 +134,8 @@ export class TableComponent extends BaseComponent implements OnInit {
       this.entries.forEach(entry => {
         this.itemNamesId[entry.id] = this.tableDefinitionService.stringify(this.tableName, entry);
       });
+
+      // Update Cache
 
       // this.data = {};
       // this.data[]
@@ -108,30 +159,8 @@ export class TableComponent extends BaseComponent implements OnInit {
     });
   }
 
-  customSort(event: SortEvent) {
-    event.data.sort((data1, data2) => {
-      const value1 = data1[event.field];
-      const value2 = data2[event.field];
-      let result = null;
 
-      if (value1 == null && value2 != null)
-        result = -1;
-      else if (value1 != null && value2 == null)
-        result = 1;
-      else if (value1 == null && value2 == null)
-        result = 0;
-      else if (typeof value1 === 'string' && typeof value2 === 'string')
-        result = value1.localeCompare(value2);
-      else
-        result = (value1 < value2) ? -1 : (value1 > value2) ? 1 : 0;
-
-      return (event.order * result);
-    });
-  }
-
-
-
-  showDetails(item: any) {
+  showDetails(item: any): void {
     this.detailItem = item;
   }
 
