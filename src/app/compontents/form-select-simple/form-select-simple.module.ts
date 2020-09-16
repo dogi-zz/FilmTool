@@ -1,8 +1,8 @@
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {DropdownModule} from 'primeng/dropdown';
 import {FormSelectSimpleComponent} from './form-select-simple.component';
+import {NzSelectModule} from 'ng-zorro-antd/select';
 
 
 @NgModule({
@@ -11,7 +11,7 @@ import {FormSelectSimpleComponent} from './form-select-simple.component';
     FormsModule,
     ReactiveFormsModule,
 
-    DropdownModule,
+    NzSelectModule,
   ],
   declarations: [FormSelectSimpleComponent],
   exports: [FormSelectSimpleComponent],

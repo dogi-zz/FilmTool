@@ -55,16 +55,7 @@
                     <td *ngFor="let definition of definitions"
                         [class.hidden]="detailItem">
 
-                        <ng-container
-                                      *ngIf="definition.type == 'string' || definition.type == 'number' || definition.type == 'select'">
-                            {{data[definition.name]}}
-                        </ng-container>
-
-                        <ng-container *ngIf="definition.type == 'relation'">
-                            <ng-container *ngIf="subEntitiesById[definition.name] && data[definition.name]">
-                                {{subEntitiesById[definition.name][data[definition.name]] }}
-                            </ng-container>
-                        </ng-container>
+                        <app-field-view [definition]="definition" [value]="data[definition.name]"></app-field-view>
 
                     </td>
                 </tr>
@@ -89,3 +80,5 @@
     </div>
 
 </div>
+
+<app-edit-dialog></app-edit-dialog>

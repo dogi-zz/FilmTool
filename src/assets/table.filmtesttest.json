@@ -1,0 +1,31 @@
+{
+    "name": "Filme",
+    "showOnHome": true,
+    "columns": [
+      { "type": "number", "name": "FilmID", "displayName": "Film ID" },
+      { "type": "text", "name": "Titel", "displayName": "Filmtitel" },
+      { "type": "date", "name": "BeginnDreharbeiten", "displayName": "Beginn der Dreharbeiten" },
+      { "type": "number", "name": "LaengeInMin", "displayName": "Länge in Minuten" },
+      { "type": "text", "name": "Filmtyp", "displayName": "Typ / Genre", "options": ["Reisedokumentation", "TV-Dokumentation", "Dokumentation", "Kurzdokumentation", "Experimentell", "TV-Spielfilm", "Serie"]},
+      { "type": "text", "name": "Kommentar", "displayName": "Kommentar" },
+      { "type": "date", "name": "Erstausstrahlung", "displayName": "Erstausstrahlung" },
+      { "type": "boolean", "name": "AvailableAsDVD", "displayName": "Als DVD erhältlich" },
+      { "type": "boolean", "name": "AvailableAsBlueray", "displayName": "Als Blueray erhältlich" },
+      { "type": "date", "name": "ReleaseDVD", "displayName": "Erscheinungsdatum DVD" },
+      { "type": "date", "name": "ReleaseBlueray", "displayName": "Erscheinungsdatum Blueray" },
+      { "type": "number", "name": "Budget", "displayName": "Budget in €" },
+      { "type": "number", "name": "AnzahlATEWADMomente", "displayName": "Anzal der ATEWAD Momente" },
+      { "type": "number", "name": "ScoreATEWAD", "displayName": "ATEWAD-Score" }
+    ],
+    "infoQueries": [
+      {
+        "name": "Alle Filme vom selben Regisseur",
+        "query": {
+          "select": [["f.name", "Film"], ["f.jahr", "Jahr"]],
+          "from": "film f",
+          "where": ["f.regie = {regie}"],
+          "oder": ["f.jahr ASC"]
+        }
+      }
+    ]
+  }

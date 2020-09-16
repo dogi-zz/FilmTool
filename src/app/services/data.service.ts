@@ -35,7 +35,7 @@ export class DataService {
         });
     }
 
-    fetchData<T>(tableName: string): Promise<T[]> {
+    getDataForTable<T>(tableName: string): Promise<T[]> {
         if (this.$data[tableName]) {
             return Promise.resolve(this.$data[tableName]);
         }
@@ -47,6 +47,10 @@ export class DataService {
         });
     }
 
+    getItem<T>(tableName: string, id: number): Promise<T> {
+        return this.getDataForTable<T>(tableName).then(data => data.find(item => (item as any).id === id));
+    }
+
     getDataSrc(tableName: string): string {
         return this.dataSrc[tableName];
     }
@@ -55,19 +59,20 @@ export class DataService {
         this.dataSrc[tableName] = dataString;
         this.parseData(tableName, dataString).then(data => {
             this.$data[tableName] = data;
-            console.info(this.$data);
             this.data$.next(this.$data);
             this.firstLoad$.next(this.$data);
         });
     }
 
     addItem<T>(tableName: string, value: T): Promise<T> {
-        // console.info("addItem", tableName, value);
-        // let maxID = 1;
-        // this.data[tableName].forEach(item => maxID = Math.max(maxID, item.id + 1));
-        // value = {id: maxID, ...value};
-        // this.data[tableName].push(value);
-        return Promise.resolve(value);
+        console.info("addItem", tableName, value);
+        return this.getDataForTable(tableName).then(allItems => {
+            let maxID = 1;
+            allItems.forEach((item: any) => maxID = Math.max(maxID, item.id + 1));
+            value = {id: maxID, ...value};
+            allItems.push(value);
+            return value;
+        })
     }
 
 
@@ -84,15 +89,19 @@ export class DataService {
         const result: any[] = [];
         const header = dataRows.shift();
         dataRows.forEach(row => {
-            const rawData = {};
+            const rawData: {[head: string]: string} = {};
             for (let i = 0; i < row.length; i++) {
                 rawData[header[i]] = row[i];
             }
             const realData = {};
             tableDefinition.columns.forEach(col => {
                 if (rawData[col.name]) {
-                    if (col.type === 'number' || col.type === 'relation') {
+                    if (col.type === 'integer' || col.type === 'oneOf') {
                         realData[col.name] = parseInt(rawData[col.name], 10);
+                    } else if (col.type === 'float') {
+                        realData[col.name] = parseFloat(rawData[col.name]);
+                    } else if (col.type === 'boolean') {
+                        realData[col.name] = (rawData[col.name] && (rawData[col.name]).toLowerCase() === 'true');
                     } else {
                         realData[col.name] = rawData[col.name];
                     }

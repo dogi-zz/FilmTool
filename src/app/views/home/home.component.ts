@@ -1,4 +1,4 @@
-import {TableDefinitionService} from './../../services/table-definition.service';
+import {TableDefinitionService, TableDefinition} from './../../services/table-definition.service';
 import {Component, OnInit, isDevMode} from '@angular/core';
 import {CodeModel} from '@ngstack/code-editor';
 import {HttpClient} from '@angular/common/http';
@@ -11,7 +11,7 @@ import {BaseComponent} from '../../tools/base-component';
 })
 export class HomeComponent extends BaseComponent implements OnInit {
 
-  homeTables: string[] = [];
+  homeTables: [string, TableDefinition][] = [];
 
   constructor(
     private tableDefinitionService: TableDefinitionService,
@@ -24,7 +24,7 @@ export class HomeComponent extends BaseComponent implements OnInit {
     super.ngOnInit();
 
     this.subscribe(this.tableDefinitionService.tableDefinitions$, allDefs => {
-      this.homeTables = Object.entries(allDefs).filter(([name, def]) => def.showOnHome).map(([name, def]) => name);
+      this.homeTables = Object.entries(allDefs).filter(([name, def]) => def.showOnHome);
     });
 
     if (isDevMode()) {

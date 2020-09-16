@@ -13,9 +13,8 @@ import {DialogService, DynamicDialogModule} from 'primeng/dynamicdialog';
 import {MenubarModule} from 'primeng/menubar';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import {AddFormComponent} from './compontents/add-form/add-form.component';
 import {IconsProviderModule} from './icons-provider.module';
-import {AddItemService} from './services/add-item.service';
+import {EditDialogService} from './services/edit-dialog.service';
 import {AdminModule} from './views/admin/admin.module';
 import {HomeModule} from './views/home/home.module';
 import {TableViewModule} from './views/table/table.module';
@@ -54,9 +53,9 @@ registerLocaleData(de);
 })
 export class AppModule {
   constructor(
-    addItemService: AddItemService,
+    addItemService: EditDialogService,
   ) {
-    addItemService.modalFormComponentType = AddFormComponent;
+    //addItemService.modalFormComponentType = AddFormComponent;
   }
 
 }

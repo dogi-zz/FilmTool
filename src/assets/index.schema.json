@@ -25,7 +25,7 @@
               "properties": {
                 "type": {
                   "type": "string",
-                  "enum": ["string", "number"]
+                  "enum": ["string", "integer", "float", "boolean"]
                 },
                 "name": {
                   "type": "string"
@@ -55,6 +55,24 @@
                   }
                 }
               }
+            },
+            {
+              "required": ["type", "name", "displayName", "table"],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "const": "oneOf"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "table": {
+                  "type": "string"
+                }
+              }
             }
           ]
         }
@@ -64,10 +82,13 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["name", "query"],
+        "required": ["singleName", "listName", "query"],
         "additionalProperties": false,
         "properties": {
-          "name": {
+          "singleName": {
+            "type": "string"
+          },
+          "listName": {
             "type": "string"
           },
           "query": {

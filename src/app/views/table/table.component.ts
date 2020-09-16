@@ -1,11 +1,11 @@
-import {AddItemService} from './../../services/add-item.service';
-import {Component, OnInit} from '@angular/core';
+import {EditDialogService} from '../../services/edit-dialog.service';
+import {Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {DataService} from './../../services/data.service';
 import {TableDefinitionService, TableDefinitionItem, TableDefinition} from './../../services/table-definition.service';
 import {combineLatest} from 'rxjs';
 import {BaseComponent} from 'src/app/tools/base-component';
-import {NzTableSortOrder, NzTableSortFn, NzTableFilterList, NzTableFilterFn, NzTableQueryParams, NzTableComponent} from 'ng-zorro-antd/table';
+import {NzTableSortOrder, NzTableSortFn, NzTableFilterList, NzTableFilterFn} from 'ng-zorro-antd/table';
 
 interface ColumnItem {
   name: string;
@@ -30,17 +30,16 @@ export class TableComponent extends BaseComponent implements OnInit {
   definitions: TableDefinitionItem[] = [];
   extDefinitions: ColumnItem[] = [];
 
-  subEntitiesById: {[propName: string]: {[id: number]: string}} = {};
+  subEntityNames: {[propName: string]: {[id: number]: string}} = {};
   detailItem: any;
 
   itemNamesId: {[id: number]: string} = {};
 
   constructor(
     private route: ActivatedRoute,
-    private addItemService: AddItemService,
+    private editDialogService: EditDialogService,
     private tableDefinitionService: TableDefinitionService,
     private dataService: DataService,
-
   ) {
     super();
   }
@@ -56,14 +55,12 @@ export class TableComponent extends BaseComponent implements OnInit {
         this.tableDefinitionService.tableDefinitions$
       ]),
       ([params, definitions]) => {
-        console.info(params);
-        console.info(definitions);
         if (!params) {return;}
         if (!definitions) {return;}
         const tableName = params.tableName;
         const definition = definitions[tableName];
         this.tableName = params.tableName;
-        this.displayName = definition.name;
+        this.displayName = definition.listName;
         this.definitions = definition.columns;
 
         this.updateDefinitions();
@@ -78,12 +75,12 @@ export class TableComponent extends BaseComponent implements OnInit {
         name: def.displayName,
         sortOrder: null,
         sortFn: (a: any, b: any) => {
-          if (def.type === 'number') {
+          if (def.type === 'integer' || def.type === 'float') {
             return a[def.name] - b[def.name];
           }
-          if (def.type === 'relation') {
-            const aName = this.tableDefinitionService.stringify(def.table, this.subEntitiesById[def.name][a]);
-            const bName = this.tableDefinitionService.stringify(def.table, this.subEntitiesById[def.name][b]);
+          if (def.type === 'oneOf') {
+            const [aIdx, bIdx] = [`${a[def.name]}`, `${b[def.name]}`];
+            const [aName, bName] = [this.subEntityNames[def.name][aIdx], this.subEntityNames[def.name][bIdx]];
             return (aName || '').localeCompare(bName || '');
           }
           return (a[def.name] || '').localeCompare(b[def.name] || '');
@@ -98,18 +95,18 @@ export class TableComponent extends BaseComponent implements OnInit {
   }
 
   updateData(): void {
-    this.dataService.fetchData(this.tableName).then(data => {
-      this.entries = data;
+    this.dataService.getDataForTable(this.tableName).then(data => {
+      this.entries = data.slice();
       console.info("updateData", data);
 
       // Update Subentity Cache
-      this.subEntitiesById = {};
+      this.subEntityNames = {};
       this.definitions.forEach(def => {
-        if (def.type === 'relation') {
-          this.dataService.fetchData(def.table).then(subData => {
-            this.subEntitiesById[def.name] = {};
+        if (def.type === 'oneOf') {
+          this.dataService.getDataForTable(def.table).then(subData => {
+            this.subEntityNames[def.name] = {};
             subData.forEach(item => {
-              this.subEntitiesById[def.name][(item as any).id] =
+              this.subEntityNames[def.name][`${(item as any).id}`] =
                 this.tableDefinitionService.stringify(def.table, item);
             });
           });
@@ -132,8 +129,8 @@ export class TableComponent extends BaseComponent implements OnInit {
     });
   }
 
-  addNewItem() {
-    this.addItemService.addItemForTable(this.tableName).then(() => {
+  addNewItem(): void {
+    this.editDialogService.addNewItem(this.tableName).then(() => {
       this.updateData();
     });
   }

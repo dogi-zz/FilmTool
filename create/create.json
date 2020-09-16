@@ -1,0 +1,44 @@
+{
+  "my_component": {
+    "arguments": ["name"],
+    "files": [
+      {
+        "path": "src/app{name|dash}/{name|dash}.component.ts",
+        "code": [
+          "import {DataService} from './../../services/data.service';",
+          "import {TableDefinitionItem, TableDefinitionService} from './../../services/table-definition.service';",
+          "import {Component, OnInit, Input} from '@angular/core';",
+          null,
+          "@Component({",
+          [
+            "selector: 'app-field-view',",
+            "templateUrl: './field-view.component.html',",
+            "styleUrls: ['./field-view.component.scss']"
+          ],
+          "})",
+          "export class FieldViewComponent implements OnInit {",
+          [
+            "@Input()",
+            "definition: TableDefinitionItem;",
+            null,
+            "@Input()",
+            "value: any;",
+            null,
+            "viewValue: Promise<any>;",
+            null,
+            "constructor(",
+            [
+                "private tableDefinitionService: TableDefinitionService,",
+                "private dataService: DataService,"
+                ],
+            ") {}",
+            null,
+            "ngOnInit(): void {",
+            "}"
+          ],
+          "}"
+        ]
+      }
+    ]
+  }
+}

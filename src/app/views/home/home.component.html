@@ -1,8 +1,8 @@
-<h1>Anzeige</h1>
+<h1>Anzeige der Daten</h1>
 
 <ul>
     <li *ngFor="let table of homeTables">
-        <a [routerLink]="['/table', table]"
-           routerLinkActive="router-link-active">{{table}}</a>
+        <a [routerLink]="['/table', table[0]]"
+           routerLinkActive="router-link-active">{{table[1].listName}}</a>
     </li>
 </ul>

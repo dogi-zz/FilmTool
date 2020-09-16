@@ -1,13 +1,17 @@
 {
-  "name": "Filme",
+  "singleName": "Film",
+  "listName": "Filme",
   "showOnHome": true,
+  "toStringExpression": "{title}",
   "columns": [
-    { "type": "number", "name": "id", "displayName": "ID" },
+    { "type": "integer", "name": "id", "displayName": "ID" },
     { "type": "string", "name": "title", "displayName": "Titel" },
     { "type": "string", "name": "subtitle", "displayName": "Untertitel" },
-    { "type": "number", "name": "jahr", "displayName": "Erscheinungsjahr" },
+    { "type": "integer", "name": "jahr", "displayName": "Erscheinungsjahr" },
+    { "type": "float", "name": "einnahmen", "displayName": "Einnahmen" },
+    { "type": "boolean", "name": "hasBlueRay", "displayName": "BluRay vorhanden" },
     { "type": "select", "name": "genre", "displayName": "Genre", "options": ["Doku", "Abenteuer", "Liebesfilm"]},
-    { "type": "relation", "name": "regie", "displayName": "Regie", "table": "person" }
+    { "type": "oneOf", "name": "regie", "displayName": "Regie", "table": "person" }
   ],
   "infoQueries": [
     {

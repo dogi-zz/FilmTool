@@ -41,7 +41,7 @@ export class FormSelectEntityComponent implements OnInit, OnChanges, ControlValu
   }
 
   async update(): Promise<void> {
-    const data = await this.dataService.fetchData<any>(this.definition.table);
+    const data = await this.dataService.getDataForTable<any>(this.definition.table);
     const options: SelectItem[] = [{label: 'nix', value: null}];
     data.map(async item => {
       const label = await this.tableDefinitionService.stringify(this.definition.table, item);

@@ -1,0 +1,118 @@
+<nz-modal nzTitle="Modal Title"
+          [(nzVisible)]="isVisible"
+          [nzOkDisabled]="!isMainItem"
+          (nzOnCancel)="handleCancel()"
+          (nzOnOk)="handleOk()"
+          [nzOkLoading]="isOkLoading">
+
+
+
+    <div style="min-height: 70vh; overflow: auto;">
+
+        <form [formGroup]="formGroup"
+              *ngIf="formGroup">
+            <table style="width: 100%;">
+                <tr *ngFor="let definition of definitions">
+                    <th>{{definition.displayName}}</th>
+
+                    <td *ngIf="definition.type=='integer'">
+                        <nz-input-number [nzPrecision]="0"
+                                         [formControlName]="definition.name"></nz-input-number>
+                    </td>
+
+                    <td *ngIf="definition.type=='float'">
+                        <nz-input-number [formControlName]="definition.name"
+                                         [nzPrecision]="3"></nz-input-number>
+                    </td>
+
+                    <td *ngIf="definition.type=='number'"></td>
+
+                    <td *ngIf="definition.type=='string'">
+                        <input nz-input
+                               style="width: 100%;"
+                               type="text"
+                               [placeholder]="definition.displayName"
+                               [formControlName]="definition.name" />
+                    </td>
+
+                    <td *ngIf="definition.type=='boolean'">
+                        <label nz-checkbox
+                               [formControlName]="definition.name"
+                               [title]="definition.displayName"></label>
+                    </td>
+
+                    <td *ngIf="definition.type=='oneOf'">
+                        <nz-select nzShowSearch
+                                   nzServerSearch
+                                   nzPlaceHolder="search item"
+                                   [formControlName]="definition.name"
+                                   [nzShowArrow]="false"
+                                   (nzOnSearch)="oneOfSearches[definition.name]($event)">
+                            <nz-option style="color: grey;"
+                                       [nzCustomContent]="true"
+                                       [nzValue]="null">
+                                <span style="font-style: italic; color: lightgray;">(none)</span>
+                            </nz-option>
+                            <nz-option *ngFor="let o of oneOfOptions[definition.name]"
+                                       [nzLabel]="o.text"
+                                       [nzValue]="o.value"> </nz-option>
+                            <nz-option style="color: grey;"
+                                       [nzCustomContent]="true">
+                                <span style="color: #1890ff"
+                                      (click)="addNewOneOf(definition)">add new .... </span>
+                            </nz-option>
+                        </nz-select>
+                    </td>
+
+                    <!-- <td *ngIf="definition.type=='relation'">
+                            <app-form-select-entity [definition]="definition"
+                                                    [formControlName]="definition.name"></app-form-select-entity>
+                        </td>
+                        <td *ngIf="definition.type=='relation'">
+                            <span class="p-button-secondary"
+                                  style="cursor: pointer; font-style: italic;"
+                                  (click)="addSubItem(definition.name, definition.table)">neu anlegen...</span>
+                        </td>
+         -->
+
+                    <td *ngIf="definition.type=='select'">
+                        <app-form-select-simple [definition]="definition"
+                                                [formControlName]="definition.name"></app-form-select-simple>
+                    </td>
+                    <td *ngIf="definition.type=='select'"></td>
+
+                </tr>
+                <!-- <tr>
+                        <td></td>
+                        <td style="text-align: right;">
+                            <p-button label="Add"
+                                      (click)="add()"></p-button>
+                        </td>
+                    </tr> -->
+            </table>
+        </form>
+
+        <div *ngIf="!isMainItem"
+             style="display: flex; margin: 10px 0;">
+            <div style="flex: 1; text-align: left;">
+                <button nz-button
+                        nzType="default"
+                        (click)="cancelItem()">
+                    cancel
+                </button>
+            </div>
+            <div style="flex: 1; text-align: right;">
+                <button nz-button
+                        nzType="primary"
+                        (click)="addItem()">
+                    <i nz-icon
+                       nzType="form"></i> add
+                </button>
+            </div>
+        </div>
+
+
+    </div>
+
+
+</nz-modal>

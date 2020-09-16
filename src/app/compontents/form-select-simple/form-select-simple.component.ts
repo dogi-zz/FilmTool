@@ -1,7 +1,7 @@
-import {TableDefinitionItem} from './../../../services/table-definition.service';
-import {Component, OnInit, OnChanges, Input, forwardRef, SimpleChanges} from '@angular/core';
-import {SelectItem} from 'primeng/api';
+import {TableDefinitionItem} from './../../services/table-definition.service';
+import {Component, OnInit, OnChanges, Input, forwardRef, SimpleChanges, OnDestroy} from '@angular/core';
 import {FormControl, ControlValueAccessor, NG_VALUE_ACCESSOR, FormGroup} from '@angular/forms';
+import {Subscription} from 'rxjs';
 
 export const CHECKBOX_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
@@ -15,7 +15,7 @@ export const CHECKBOX_VALUE_ACCESSOR: any = {
   styleUrls: ['./form-select-simple.component.scss'],
   providers: [CHECKBOX_VALUE_ACCESSOR],
 })
-export class FormSelectSimpleComponent implements OnInit, OnChanges, ControlValueAccessor {
+export class FormSelectSimpleComponent implements OnInit, OnChanges, OnDestroy, ControlValueAccessor {
 
   @Input()
   definition: TableDefinitionItem;
@@ -23,25 +23,28 @@ export class FormSelectSimpleComponent implements OnInit, OnChanges, ControlValu
   @Input()
   formGroup: FormGroup = new FormGroup({value: new FormControl()});
 
-  options: SelectItem[];
+  options: string[];
   onChange: any;
+  sub: Subscription;
 
   constructor() {}
 
   ngOnInit(): void {
+    this.sub = this.formGroup.valueChanges.subscribe(data => {
+      if (this.onChange) {
+        this.onChange(data.value);
+      }
+    });
     this.update();
   }
   ngOnChanges(changes: SimpleChanges): void {
     this.update();
   }
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
+  }
   update(): void {
-    this.options = [
-      {label: 'nix', value: null},
-      ...this.definition.options.map(option => ({
-        label: option,
-        value: option,
-      }))
-    ];
+    this.options = this.definition.options;
   }
 
   writeValue(obj: any): void {
@@ -57,10 +60,6 @@ export class FormSelectSimpleComponent implements OnInit, OnChanges, ControlValu
   }
   setDisabledState?(isDisabled: boolean): void {
     //console.info('setDisabledState');
-  }
-
-  valueChanged(event): void {
-    this.onChange(this.formGroup.value.value);
   }
 
 }

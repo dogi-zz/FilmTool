@@ -1,11 +1,15 @@
-<h1>{{title|async}}</h1>
+<h1>{{title}}</h1>
 
 <table>
-    <tr *ngFor="let item of infos">
-        <th>{{item[0]}}</th>
-        <td>{{item[1]|async}}</td>
+    <tr *ngFor="let definition of definitions">
+        <th>{{definition.displayName}}</th>
+        <td>
+            <app-field-view [definition]="definition"
+                            [value]="item[definition.name]"></app-field-view>
+        </td>
     </tr>
 </table>
+
 
 <div *ngFor="let ai of additionalInfos">
     <h2>{{(ai | async)?.name}}</h2>

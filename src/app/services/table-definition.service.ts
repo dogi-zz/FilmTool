@@ -2,11 +2,11 @@ import {Injectable, isDevMode} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Subject, BehaviorSubject} from 'rxjs';
 
-
 export type TableDefinitions = {[table: string]: TableDefinition};
 
 export interface TableDefinition {
-    name: string;
+    singleName: string;
+    listName: string;
     toStringExpression: string;
     showOnHome: boolean;
     columns: TableDefinitionItem[];
@@ -20,7 +20,7 @@ export interface TableDefinition {
 }
 
 export interface TableDefinitionItem {
-    type: 'string' | 'number' | 'relation' | 'select';
+    type: 'string' | 'integer' | 'float' | 'boolean' | 'select' | 'oneOf';
     name: string;
     displayName: string;
     table?: string;
@@ -32,27 +32,6 @@ export interface IndexTables {
     tables: string[];
 }
 
-
-// "infoQueries": [
-//     {
-//       "name": "Alle Filme mit der Person",
-//       "query": {
-//         "select": [["f.name", "Film"], ["r.rolle", "Rolle"]],
-//         "from": "person p JOIN rolle r on p.rolle = r.id JOIN film.f on r.film = f.id",
-//         "where": ["p.id = {id}"]
-//       }
-//     },
-//     {
-//       "name": "Alle Freunde Person",
-//       "query": {
-//         "select": [["p.name", "Freund"]],
-//         "from": "person p1 JOIN person p2 on p2.id = p1.freund",
-//         "where": ["p1.id = {id}"]
-//       }
-//     }
-
-//   ]
-
 @Injectable({
     providedIn: 'root'
 })
@@ -62,7 +41,7 @@ export class TableDefinitionService {
     private firstLoad$: Subject<TableDefinitions> = new BehaviorSubject({});
 
 
-    private $tableDefinitions: TableDefinitions;
+    private $tableDefinitions: TableDefinitions = {};
     private tableDefinitionSrc: {[table: string]: string} = {};
 
     constructor(
@@ -99,13 +78,6 @@ export class TableDefinitionService {
         return this.tableDefinitionSrc[tableName];
     }
 
-    // getAllTables(): Promise<string[]> {
-    //     const path = isDevMode() ? '/assets' : '/filmtool/assets';
-    //     return this.http.get<any>(`${path}/index.tables.json`).toPromise().then(data => {
-    //         return data.tables;
-    //     });
-    // }
-
     getDefinition(tableName: string): Promise<TableDefinition> {
         if (this.$tableDefinitions[tableName]) {
             return Promise.resolve(this.$tableDefinitions[tableName]);
@@ -117,13 +89,6 @@ export class TableDefinitionService {
             });
         });
     }
-
-    // getDefinitionItems(tableName: string): Promise<TableDefinitionItem[]> {
-    //     return this.getDefinition(tableName).then(data => {
-    //         console.info("got table definition", tableName, data)
-    //         return data.columns;
-    //     });
-    // }
 
     stringify(tableName: string, item: any): string {
         if (!item) {return null;}
@@ -137,7 +102,7 @@ export class TableDefinitionService {
                 });
                 return result;
             }
-            return `${def.name} with id ${item.id}`;
+            return `${def.singleName} with id ${item.id}`;
         }
         return `Object with id ${item.id}`;
     }

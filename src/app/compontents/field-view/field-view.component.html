@@ -1,0 +1,32 @@
+<ng-container *ngIf="definition.type == 'string'">
+    {{viewValue|async}}
+</ng-container>
+
+<ng-container *ngIf="definition.type == 'integer'">
+    {{viewValue|async}}
+</ng-container>
+
+<ng-container *ngIf="definition.type == 'float'">
+    {{viewValue|async}}
+</ng-container>
+
+<ng-container *ngIf="definition.type == 'select'">
+    {{viewValue|async}}
+</ng-container>
+
+<ng-container *ngIf="definition.type == 'boolean'">
+    <i *ngIf="(viewValue|async)"
+       style="color: black;"
+       nz-icon
+       nzType="check-square"
+       nzTheme="outline"></i>
+    <i *ngIf="!(viewValue|async)"
+       style="color: lightgray;"
+       nz-icon
+       nzType="close-square"
+       nzTheme="outline"></i>
+</ng-container>
+
+<ng-container *ngIf="definition.type == 'oneOf'">
+    {{viewValue|async}}
+</ng-container>

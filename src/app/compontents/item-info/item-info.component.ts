@@ -21,15 +21,14 @@ export class ItemInfoComponent implements OnInit, OnChanges {
   @Input()
   tableName: string;
 
-  title: Promise<string>;
-  infos: [string, Promise<any>][] = [];
+  title: string;
+  definitions: TableDefinitionItem[] = [];
 
   additionalInfos: Promise<AdditinalInfo>[];
 
   constructor(
     private tableDefinitionService: TableDefinitionService,
     private dataService: DataService,
-
   ) {}
 
 
@@ -42,38 +41,33 @@ export class ItemInfoComponent implements OnInit, OnChanges {
   }
 
   update(): void {
-    // this.tableDefinitionService.getDefinition(this.tableName).then((definition: TableDefinition) => {
-    //   console.info(definition);
+    this.tableDefinitionService.tableDefinitions$.subscribe(definitions => {
+      const tableName = this.tableName;
+      const definition = definitions[tableName];
 
-    //   this.title = this.tableDefinitionService.stringify(this.tableName, this.item);
+      this.title = this.tableDefinitionService.stringify(this.tableName, this.item);
+      this.definitions = definition.columns;
 
-    //   this.infos = [];
-    //   definition.columns.forEach(col => {
-    //     const name = col.displayName;
-    //     const value = this.getValue(col);
-    //     this.infos.push([name, value]);
-    //   });
-
-    //   this.additionalInfos = [];
-    //   definition.infoQueries.forEach(query => {
-    //     this.additionalInfos.push(this.getAdditional(query))
-    //   });
-
-    // });
-  }
-
-
-  getValue(definitionItem: TableDefinitionItem): Promise<any> {
-    const value = this.item[definitionItem.name];
-    if (definitionItem.type === 'relation' && value) {
-      return this.dataService.fetchData<any>(definitionItem.table).then(allItems => {
-        const childItem = allItems.find(item => item.id === value);
-        return this.tableDefinitionService.stringify(definitionItem.table, childItem);
+      this.additionalInfos = [];
+      definition.infoQueries.forEach(query => {
+        this.additionalInfos.push(this.getAdditional(query))
       });
-    } else {
-      return Promise.resolve(value);
-    }
+
+    });
   }
+
+
+  // getValue(definitionItem: TableDefinitionItem): Promise<any> {
+  //   const value = this.item[definitionItem.name];
+  //   if (definitionItem.type === 'relation' && value) {
+  //     return this.dataService.fetchData<any>(definitionItem.table).then(allItems => {
+  //       const childItem = allItems.find(item => item.id === value);
+  //       return this.tableDefinitionService.stringify(definitionItem.table, childItem);
+  //     });
+  //   } else {
+  //     return Promise.resolve(value);
+  //   }
+  // }
 
   getAdditional(query: {name: string; query: {select: [string, string][];};}): Promise<AdditinalInfo> {
     return Promise.resolve({
