@@ -1,9 +1,6 @@
+import {CodeModel} from '@ngstack/code-editor';
 import * as fs from 'fs';
 import * as path from 'path';
-
-type CodeLineDefinition = string | null | CodeLineDefinition[] | {
-    expression: string
-};
 
 interface CreateDefinitionFile {
     path: string;
@@ -11,22 +8,66 @@ interface CreateDefinitionFile {
     code: CodeLineDefinition[];
 }
 
+
+export type CodeLineDefinition = string | null | CodeLineDefinition[] | {
+    expression: 'argument',
+    line: string,
+} | {
+    expression: 'if',
+    if: string,
+    then: CodeLineDefinition[],
+    else: CodeLineDefinition[],
+} | {
+    expression: '//',
+    '//': string,
+};
+
+
+export interface CreateArgumentDefinitionString {
+    name: string;
+    type: 'string';
+}
+export interface CreateArgumentDefinitionBoolean {
+    name: string;
+    type: 'boolean';
+}
+export interface CreateArgumentDefinitionNumber {
+    name: string;
+    type: 'number';
+    default?: number;
+}
+export type CreateArgumentDefinition =
+    CreateArgumentDefinitionString
+    | CreateArgumentDefinitionBoolean
+    | CreateArgumentDefinitionNumber;
+
+
 export interface CreateDefinition {
-    arguments: string[];
+    arguments: CreateArgumentDefinition[];
     files: CreateDefinitionFile[];
 }
+
 
 export type CreateDefinitions = {
     [name: string]: CreateDefinition,
 };
 
-export interface InterfaceConsumer {
+
+
+export interface CreateInterface {
     consumeArg: (
         description: string,
         namedArg: string | null,
         validator?: (value: string) => boolean,
         options?: string[]
     ) => Promise<string>;
+
+    consumeStringArg: (namedArg: string) => Promise<string>;
+
+    consumeBooleanArg: (namedArg: string) => Promise<boolean>;
+
+    consumeNumberArg: (namedArg: string, defaultValue: number) => Promise<number>;
+
 }
 
 
@@ -66,32 +107,38 @@ export class CreatorPerformer {
 
     constructor(
         private allDefinitions: CreateDefinitions,
-        private ic: InterfaceConsumer,
+        private ic: CreateInterface,
     ) {
         this.createUtilities = require('../create.functions.js');
     }
 
     async perform(): Promise<void> {
         const options = Object.keys(this.allDefinitions);
-        const moduleName = await this.ic.consumeArg("Was willst du machen?", null, value => options.includes(value), options);
+        const moduleName = await this.ic.consumeArg('Was willst du machen?', null, value => options.includes(value), options);
 
         const createModule = this.allDefinitions[moduleName];
-        console.info("Modul: ", createModule);
 
-        const args: {[name: string]: string} = {};
-        for (const argName of createModule.arguments) {
-            const argValue = await this.ic.consumeArg(`${argName}?`, argName);
-            args[argName] = argValue;
+        const args: {[name: string]: any} = {};
+        for (const argDef of createModule.arguments) {
+            if (argDef.type === 'string') {
+                args[argDef.name] = await this.ic.consumeStringArg(argDef.name);
+            }
+            if (argDef.type === 'boolean') {
+                args[argDef.name] = await this.ic.consumeBooleanArg(argDef.name);
+            }
+            if (argDef.type === 'number') {
+                args[argDef.name] = await this.ic.consumeNumberArg(argDef.name, argDef.default);
+            }
         }
-        console.info("Arguments: ", args);
 
         createModule.files.forEach(file => {
             this.createFile(file, args);
         });
     }
 
-    async createFile(file: CreateDefinitionFile, args: {[name: string]: string;}): Promise<void> {
+    async createFile(file: CreateDefinitionFile, args: {[name: string]: any}): Promise<void> {
         const filePath = this.getExpressionResult(file.path, args);
+        args._filePath_ = filePath;
         const fileDir = path.dirname(filePath);
         const dirExists = await Tools.dirExists(fileDir);
         if (!dirExists) {
@@ -100,56 +147,88 @@ export class CreatorPerformer {
         // TODO: continue hier
 
         let indent = '';
-        let indentCount = file.indent || 2;
+        const indentCount = file.indent || 2;
         for (let i = 0; i < indentCount; i++) {indent += ' ';}
 
-        let code: string[] = [];
-        file.code.forEach(cld => {
-            code = code.concat(this.getCodeLine(cld, indent, args));
-        });
+        const code: string[] = this.getCodeLines(file.code, indent, args);
         console.info(code);
     }
 
+    getCodeLines(codeLineDefinitions: CodeLineDefinition[], indent: string, args: {[name: string]: any}): string[] {
+        let code: string[] = [];
+        codeLineDefinitions.forEach(cld => {
+            code = code.concat(this.getCodeLine(cld, indent, args));
+        });
+        return code;
+    }
 
 
-    getCodeLine(codeLineDefinition: CodeLineDefinition, indent: string, args: {[name: string]: string;}): string[] {
+    getCodeLine(codeLineDefinition: CodeLineDefinition, indent: string, args: {[name: string]: any}): string[] {
         if (codeLineDefinition === null) {
             return [''];
         }
         if (Array.isArray(codeLineDefinition)) {
             let code: string[] = [];
             codeLineDefinition.forEach(cld => {
-                code = code.concat(this.getCodeLine(cld, indent, args).map(line => indent + line));
+                code = code.concat(this.getCodeLine(cld, indent, args).map(line => (line.length ? indent : '') + line));
             });
             return code;
         }
         if (typeof (codeLineDefinition) === 'object') {
-            if (codeLineDefinition.expression) {
-                return [this.getExpressionResult(codeLineDefinition.expression, args)];
+            if (codeLineDefinition.expression === 'argument') {
+                return [this.getExpressionResult(codeLineDefinition.line, args)];
+            }
+            if (codeLineDefinition.expression === 'if') {
+                if (args[codeLineDefinition.if]) {
+                    return this.getCodeLines(codeLineDefinition.then, indent, args);
+                } else {
+                    if (codeLineDefinition.else) {
+                        return this.getCodeLines(codeLineDefinition.else, indent, args);
+                    }
+                }
             }
             return [];
         }
         return [codeLineDefinition];
     }
 
-    getExpressionResult(pathDefintion: string, args: {[name: string]: string;}): string {
-        let result = '';
-        let index = 0;
-        let match;
-        // tslint:disable-next-line: no-conditional-assignment
-        while (match = pathDefintion.substr(index).match(/\{(.+?)\}/)) {
-            result += pathDefintion.substr(index, match.index) + this.getArgResult(match[1], args);
-            index += match.index + match[0].length;
+    getExpressionResult(pathDefintion: string, args: {[name: string]: any}): string {
+        const tokens: [string, boolean][] = [];
+        let token: [string, boolean] = ['', false];
+        for (let i = 0; i < pathDefintion.length; i++) {
+            if (pathDefintion[i] === '\\') {
+                token[0] += pathDefintion[i + 1];
+                i++;
+                continue;
+            }
+            if (pathDefintion[i] === '{') {
+                if (token[0].length) {tokens.push(token);}
+                token = ['', true];
+            }
+            token[0] += pathDefintion[i];
+            if (pathDefintion[i] === '}') {
+                if (token.length) {tokens.push(token);}
+                token = ['', false];
+            }
         }
-        result += pathDefintion.substr(index);
-        return result;
+        if (token[0].length) {
+            token[1] = false;
+            tokens.push(token);
+        }
+        const result = tokens.map(t => t[1] ? this.getArgResult(t[0].substr(1, t[0].length - 2), args) : t[0]);
+        return result.join('');
     }
 
-    getArgResult(argDef: string, args: {[name: string]: string;}): string {
+    getArgResult(argDef: string, args: {[name: string]: any}): string {
         const pipeIdx: number = argDef.lastIndexOf('|');
-        if (pipeIdx < 0) {return args[argDef];}
+        if (pipeIdx < 0) {
+            if (argDef.startsWith('\'') && argDef.endsWith('\'')) {
+                return argDef.substr(1, argDef.length - 2);
+            }
+            return args[argDef];
+        }
         const funcName = argDef.substr(pipeIdx + 1);
-        return this.createUtilities[funcName](this.getArgResult(argDef.substr(0, pipeIdx), args));
+        return this.createUtilities[funcName](this.getArgResult(argDef.substr(0, pipeIdx), args), args);
     }
 
 }

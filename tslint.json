@@ -140,5 +140,6 @@
   },
   "rulesDirectory": [
     "codelyzer"
-  ]
+  ],
+  "prefer-for-of": false
 }

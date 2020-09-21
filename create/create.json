@@ -1,27 +1,50 @@
 {
   "my_component": {
-    "arguments": ["name"],
+    "arguments": [
+      { "name": "name", "type": "string" },
+      { "name": "indent", "type": "number", "default": 2 },
+      { "name": "addInput", "type": "boolean" }
+    ],
     "files": [
       {
         "path": "src/app/test.components/{name|dashCase}/{name|dashCase}.component.ts",
         "code": [
-          "import {Component, OnInit, Input} from '@angular/core';",
-          "import {DataService} from './../../services/data.service';",
+
+          { "expression": "//", "//": "--- Angular Import" },
+          {
+            "expression": "if",
+            "if": "addInput",
+            "then": ["import {Component, OnInit, Input} from '@angular/core';"],
+            "else": ["import {Component, OnInit} from '@angular/core';"]
+          },
+
+          { "expression": "//", "//": "--- Eigene Imports" },
+          { "expression": "argument", "line": "import \\{DataService\\} from '{'src/app/services/data.service.ts'|relativePath}';" },
           "import {TableDefinitionService} from './../../services/table-definition.service';",
+
           null,
           "@Component({",
           [
-            { "expression": "selector: 'app-{name|dashCase}'," },
-            { "expression": "templateUrl: './{name|dashCase}.component.html'," },
-            { "expression": "styleUrls: ['./{name|dashCase}.component.scss']" }
+            { "expression": "argument", "line": "selector: 'app-{name|dashCase}'," },
+            { "expression": "argument", "line": "templateUrl: './{name|dashCase}.component.html'," },
+            { "expression": "argument", "line": "styleUrls: ['./{name|dashCase}.component.scss']" }
           ],
           "})",
-          { "expression": "export class {name|camelCase}Component implements OnInit {" },
+          { "expression": "argument", "line": "export class {name|camelCase}Component implements OnInit {" },
           [
             null,
-            "@Input()",
-            "value: any;",
-            null,
+
+            { "expression": "//", "//": "--- Falls ein Input gewünscht ist" },
+            {
+              "expression": "if",
+              "if": "addInput",
+              "then": [
+                "@Input()",
+                "value: any;",
+                null
+              ]
+            },
+
             "constructor(",
             [
               "private tableDefinitionService: TableDefinitionService,",
@@ -32,6 +55,7 @@
             "ngOnInit(): void {",
             "}"
           ],
+          null,
           "}"
         ]
       }
