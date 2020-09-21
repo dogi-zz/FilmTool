@@ -100,6 +100,8 @@ export class DataService {
                         realData[col.name] = parseInt(rawData[col.name], 10);
                     } else if (col.type === 'float') {
                         realData[col.name] = parseFloat(rawData[col.name]);
+                    } else if (col.type === 'date') {
+                        realData[col.name] = new Date(rawData[col.name]);
                     } else if (col.type === 'boolean') {
                         realData[col.name] = (rawData[col.name] && (rawData[col.name]).toLowerCase() === 'true');
                     } else {

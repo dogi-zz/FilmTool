@@ -3,34 +3,30 @@
     "arguments": ["name"],
     "files": [
       {
-        "path": "src/app{name|dash}/{name|dash}.component.ts",
+        "path": "src/app/test.components/{name|dashCase}/{name|dashCase}.component.ts",
         "code": [
-          "import {DataService} from './../../services/data.service';",
-          "import {TableDefinitionItem, TableDefinitionService} from './../../services/table-definition.service';",
           "import {Component, OnInit, Input} from '@angular/core';",
+          "import {DataService} from './../../services/data.service';",
+          "import {TableDefinitionService} from './../../services/table-definition.service';",
           null,
           "@Component({",
           [
-            "selector: 'app-field-view',",
-            "templateUrl: './field-view.component.html',",
-            "styleUrls: ['./field-view.component.scss']"
+            { "expression": "selector: 'app-{name|dashCase}'," },
+            { "expression": "templateUrl: './{name|dashCase}.component.html'," },
+            { "expression": "styleUrls: ['./{name|dashCase}.component.scss']" }
           ],
           "})",
-          "export class FieldViewComponent implements OnInit {",
+          { "expression": "export class {name|camelCase}Component implements OnInit {" },
           [
-            "@Input()",
-            "definition: TableDefinitionItem;",
             null,
             "@Input()",
             "value: any;",
             null,
-            "viewValue: Promise<any>;",
-            null,
             "constructor(",
             [
-                "private tableDefinitionService: TableDefinitionService,",
-                "private dataService: DataService,"
-                ],
+              "private tableDefinitionService: TableDefinitionService,",
+              "private dataService: DataService,"
+            ],
             ") {}",
             null,
             "ngOnInit(): void {",

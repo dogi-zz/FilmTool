@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "removeComments": false,
+        "sourceMap": false,
+        "suppressImplicitAnyIndexErrors": true,
+		"target": "es6",
+		"outDir": "./ts-out/"
+    },
+	"include": [
+		"**/*.ts"
+	]
+}

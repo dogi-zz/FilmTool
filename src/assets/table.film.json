@@ -2,16 +2,22 @@
   "singleName": "Film",
   "listName": "Filme",
   "showOnHome": true,
-  "toStringExpression": "{title}",
+  "toStringExpression": "{titel}",
   "columns": [
-    { "type": "integer", "name": "id", "displayName": "ID" },
-    { "type": "string", "name": "title", "displayName": "Titel" },
-    { "type": "string", "name": "subtitle", "displayName": "Untertitel" },
-    { "type": "integer", "name": "jahr", "displayName": "Erscheinungsjahr" },
-    { "type": "float", "name": "einnahmen", "displayName": "Einnahmen" },
-    { "type": "boolean", "name": "hasBlueRay", "displayName": "BluRay vorhanden" },
-    { "type": "select", "name": "genre", "displayName": "Genre", "options": ["Doku", "Abenteuer", "Liebesfilm"]},
-    { "type": "oneOf", "name": "regie", "displayName": "Regie", "table": "person" }
+    { "type": "string", "name": "titel", "displayName": "Filmtitel" },
+    { "type": "date", "name": "beginn_dreharbeiten", "displayName": "Beginn der Dreharbeiten" },
+    { "type": "integer", "name": "laenge", "displayName": "Länge in Minuten" },
+    { "type": "string", "name": "filmtyp", "displayName": "Typ / Genre", "options": ["Reisedokumentation", "TV-Dokumentation", "Dokumentation", "Kurzdokumentation", "Experimentell", "TV-Spielfilm", "Serie"]},
+    { "type": "text", "name": "kommentar", "displayName": "Kommentar" },
+    { "type": "string", "name": "erstausstrahlung", "displayName": "Erstausstrahlung" },
+    { "type": "boolean", "name": "available_dvd", "displayName": "Als DVD erhältlich" },
+    { "type": "boolean", "name": "available_bluray", "displayName": "Als Blueray erhältlich" },
+    { "type": "date", "name": "release_dvd", "displayName": "Erscheinungsdatum DVD" },
+    { "type": "date", "name": "release_bluray", "displayName": "Erscheinungsdatum Blueray" },
+    { "type": "float", "name": "budget", "displayName": "Budget in €" },
+    { "type": "integer", "name": "anzahl_atewad_Momente", "displayName": "Anzal der ATEWAD Momente" },
+    { "type": "float", "name": "score_atewad", "displayName": "ATEWAD-Score" }
+
   ],
   "infoQueries": [
     {

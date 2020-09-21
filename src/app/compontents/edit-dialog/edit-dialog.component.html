@@ -25,8 +25,6 @@
                                          [nzPrecision]="3"></nz-input-number>
                     </td>
 
-                    <td *ngIf="definition.type=='number'"></td>
-
                     <td *ngIf="definition.type=='string'">
                         <input nz-input
                                style="width: 100%;"
@@ -40,6 +38,12 @@
                                [formControlName]="definition.name"
                                [title]="definition.displayName"></label>
                     </td>
+
+                    <td *ngIf="definition.type=='date'">
+                        <nz-date-picker [formControlName]="definition.name"></nz-date-picker>
+                    </td>
+
+
 
                     <td *ngIf="definition.type=='oneOf'">
                         <nz-select nzShowSearch

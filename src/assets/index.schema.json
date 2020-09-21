@@ -25,7 +25,7 @@
               "properties": {
                 "type": {
                   "type": "string",
-                  "enum": ["string", "integer", "float", "boolean"]
+                  "enum": ["string", "integer", "float", "boolean", "date"]
                 },
                 "name": {
                   "type": "string"

@@ -11,7 +11,7 @@ import {Component, OnInit} from '@angular/core';
 export class AppComponent implements OnInit {
 
   isCollapsed = false;
-  
+
   homeTables: string[];
 
   constructor(

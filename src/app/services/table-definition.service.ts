@@ -20,7 +20,7 @@ export interface TableDefinition {
 }
 
 export interface TableDefinitionItem {
-    type: 'string' | 'integer' | 'float' | 'boolean' | 'select' | 'oneOf';
+    type: 'string' | 'integer' | 'float' | 'boolean' | 'date' | 'select' | 'oneOf';
     name: string;
     displayName: string;
     table?: string;
@@ -81,6 +81,9 @@ export class TableDefinitionService {
     getDefinition(tableName: string): Promise<TableDefinition> {
         if (this.$tableDefinitions[tableName]) {
             return Promise.resolve(this.$tableDefinitions[tableName]);
+        }
+        if (!this.firstLoad$) {
+            return new Promise(res => setTimeout(res, 1)).then(() => this.getDefinition(tableName));
         }
         return new Promise<TableDefinition>(res => {
             const sub = this.firstLoad$.subscribe(data => {

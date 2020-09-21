@@ -14,6 +14,10 @@
     {{viewValue|async}}
 </ng-container>
 
+<ng-container *ngIf="definition.type == 'date'">
+    {{viewValue|async}}
+</ng-container>
+
 <ng-container *ngIf="definition.type == 'boolean'">
     <i *ngIf="(viewValue|async)"
        style="color: black;"

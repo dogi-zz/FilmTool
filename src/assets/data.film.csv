@@ -1,3 +1,3 @@
-id ;title                                      ;subtitle              ;jahr;einnahmen;hasBlueRay;genre    ;regie
-123;Toller Film                                ;Der tolle Sachen zeigt;2020;123.45   ;true      ;Doku     ;123
-124;Indiana Jones und die Kammer des Schreckens;                      ;2015;123      ;;Abenteuer;14
+id ;titel                                     ;jahr;budget ;available_bluray;available_dvd;filmtyp           ;regie;erstausstrahlung;release_dvd;release_bluray;anzahl_atewad_Momente
+123;Toller Film                               ;2020;123.45 ;true            ;false        ;Reisedokumentation;123  ;2020-01-01      ;           ;              ;1                    
+124;Indiana Jones und die Kammer des Schrecken;2015;123    ;false           ;false        ;TV-Dokumentation  ;14   ;2019-08-24      ;           ;              ;3                    
